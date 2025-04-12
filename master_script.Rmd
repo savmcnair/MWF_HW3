@@ -1,4 +1,27 @@
+---
+title: "master_script_md"
+author: "Savannah McNair"
+date: "2025-04-12"
+output: html_document
+---
+
 #1. Set up a local Spark server and add the two datasets you used in the first assignment from their GitHub repository. (20%)
+
+#prerequisites
+had to download java
+```{r}
+system("java -version")
+#install.packages("sparklyr")
+packageVersion("sparklyr")
+library(sparklyr)
+spark_install(version = "2.3")
+```
+
+#connecting
+```{r}
+sc <- spark_connect(master = "local", version = "2.3")
+```
+
 
 #2. In Spark, merge the two datasets, make a smaller version that includes only: Germany, China, Japan, United Kingdom, US, Brazil, Mexico and calculate the number of cases and rate of cases (cases/population) by country and day. Do two graphs and interpret them: change in the number of cases and change in rate by country. (25%)
 
