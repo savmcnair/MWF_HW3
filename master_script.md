@@ -1,0 +1,9 @@
+#1. Set up a local Spark server and add the two datasets you used in the first assignment from their GitHub repository. (20%)
+
+#2. In Spark, merge the two datasets, make a smaller version that includes only: Germany, China, Japan, United Kingdom, US, Brazil, Mexico and calculate the number of cases and rate of cases (cases/population) by country and day. Do two graphs and interpret them: change in the number of cases and change in rate by country. (25%)
+
+#3. Run a ml_linear_regression explaining the log of number of cases using: country, population size and day since the start of the pandemic. Interpret the results. (25%)
+
+#4. Write up everything in an analytic notebook (pdf Rmarkdown) that shows all the syntax you used, the results and walk the reader through the steps of your analysis. (20%)
+
+#5. Presentation, presentation, presentation: README gives overview of the project and has session info, report text is easy to follow, graphs are easy to understand and properly formatted. (10%)
