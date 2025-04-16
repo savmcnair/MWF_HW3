@@ -14,12 +14,38 @@ had to download java
 #install.packages("sparklyr")
 #packageVersion("sparklyr")
 library(sparklyr)
-spark_install(version = "3.0")
+#spark_install(version = "3.0")
+library(dplyr)
 ```
 
 #connecting - had to change the version to be the most recent compatible version
 ```{r}
 sc <- spark_connect(master = "local", version = "3.0")
+```
+
+#add the two data sets in the first assignment
+#csv urls
+```{r}
+url_lookup <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/UID_ISO_FIPS_LookUp_Table.csv"
+url_confirmed <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"
+```
+
+#filenames to save locally
+```{r}
+file_lookup <- "lookup.csv"
+file_confirmed <- "confirmed_global.csv"
+```
+
+#download the data
+```{r}
+download.file(url_lookup, destfile = file_lookup, mode = "wb")
+download.file(url_confirmed, destfile = file_confirmed, mode = "wb")
+```
+
+#load into spark
+```{r}
+lookup_tbl <- spark_read_csv(sc, name = "lookup_tbl", path = file_lookup, header = TRUE, infer_schema = TRUE)
+confirmed_tbl <- spark_read_csv(sc, name = "confirmed_tbl", path = file_confirmed, header = TRUE, infer_schema = TRUE)
 ```
 
 
