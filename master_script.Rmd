@@ -10,16 +10,16 @@ output: html_document
 #prerequisites
 had to download java
 ```{r}
-system("java -version")
+#system("java -version")
 #install.packages("sparklyr")
-packageVersion("sparklyr")
+#packageVersion("sparklyr")
 library(sparklyr)
-spark_install(version = "2.3")
+spark_install(version = "3.0")
 ```
 
-#connecting
+#connecting - had to change the version to be the most recent compatible version
 ```{r}
-sc <- spark_connect(master = "local", version = "2.3")
+sc <- spark_connect(master = "local", version = "3.0")
 ```
 
 
