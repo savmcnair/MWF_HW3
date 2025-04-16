@@ -51,6 +51,23 @@ confirmed_tbl <- spark_read_csv(sc, name = "confirmed_tbl", path = file_confirme
 
 #2. In Spark, merge the two datasets, make a smaller version that includes only: Germany, China, Japan, United Kingdom, US, Brazil, Mexico and calculate the number of cases and rate of cases (cases/population) by country and day. Do two graphs and interpret them: change in the number of cases and change in rate by country. (25%)
 
+#merge datasets by country/region
+```{r}
+merged_tbl <- confirmed_tbl %>%
+  left_join(lookup_tbl, 
+            by = c("CountryRegion" = "Country_Region"))
+```
+
+#filter for countries of interest
+```{r}
+countries <- c("Germany", "China", "Japan", "United Kingdom", "US", "Brazil", "Mexico")
+
+filtered_tbl <- merged_tbl %>%
+  filter(`CountryRegion` %in% countries)
+```
+
+##NEED TO DO BEFORE STATS: figure out how to make this long format since we need time?
+
 #3. Run a ml_linear_regression explaining the log of number of cases using: country, population size and day since the start of the pandemic. Interpret the results. (25%)
 
 #4. Write up everything in an analytic notebook (pdf Rmarkdown) that shows all the syntax you used, the results and walk the reader through the steps of your analysis. (20%)
