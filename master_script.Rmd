@@ -2,7 +2,9 @@
 title: "master_script_md"
 author: "Savannah McNair"
 date: "2025-04-12"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 #1. Set up a local Spark server and add the two datasets you used in the first assignment from their GitHub repository. (20%)
