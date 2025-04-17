@@ -164,10 +164,38 @@ ggplot(summary_df_clean, aes(x = days_since_start, y = total_cases, color = Coun
 
 #3. Run a ml_linear_regression explaining the log of number of cases using: country, population size and day since the start of the pandemic. Interpret the results. (25%)
 
+#log transform
 ```{r}
-
+merged_tbl <- merged_tbl %>%
+  mutate(log_cases = log(cases + 1))
 ```
 
+```{r}
+ML_rdf <- merged_tbl %>% collect()
+```
+
+#I really struggled here to be able to run the ML linear regression in Spark because of the categorical nature of country. I tried changing it to a numeric several different ways to be able to use the 
+
+cars %>%
+ml_linear_regression(mpg ~ .) %>%
+summary(), 
+
+#method, but this also didnt work in sparklyr so I did this portion in R
+```{r}
+set.seed(42)  
+train_indices <- sample(1:nrow(ML_rdf), size = 0.7 * nrow(ML_rdf))  
+training <- ML_rdf[train_indices, ]
+test <- ML_rdf[-train_indices, ]
+
+lm_model <- lm(log_cases ~ CountryRegion + Population + days_since_start, data = training)
+
+summary(lm_model)
+```
+
+This model tries to predict the log # of cases based on country, population, and days since start of the pandemic. With a median of -0.04, this model is reasonably well fitted. There are some prediction errors. 53% of the variance can be explained by the models predictors. The model as a whole is significant!
+With reference to countries in the model, on average the United States had 3.5 log fewer cases as compared to other countries, while Germany has on average 3.7 log more cases than other countries on a given day, on average. These are the max and min. 
+With reference to population, this coefficient suggests that for every additional person, the log number of cases increases by 0.0000000371. This is statistically significant! Meaning that larger populations have higher log case numbers.
+In terms of days, we see that for every day after the start of the pandemic the log # of cases increases by 0.00006108. This would map onto how we understand the progression of pandemics. 
 
 #4. Write up everything in an analytic notebook (pdf Rmarkdown) that shows all the syntax you used, the results and walk the reader through the steps of your analysis. (20%)
 
