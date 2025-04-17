@@ -6,7 +6,7 @@ Homework 3 Modern Workflows in Data Science
 
 This project will be an exploration of the change in covid cases by country over time using Spark in R. We will pull data directly from a GitHub repository online using a spark. This repository contains Johns Hopkins database of daily logs of COVID-19 cases internationally. It also has some metadata on each country including population. We will explore how country, population, and case #/case rate are interrelated through graphs and ML regression models to evaluate the predictive power of each of these components. 
 
-There are a few sections of this project: 
+**There are a few sections of this project:**
 1. Setting up a local spark server in R and connecting it. 
  
 2. Pulling data from online (at https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/UID_ISO_FIPS_LookUp_Table.csv and https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv) into the spark server and downloading it to our repository. These files are named "lookup.csv" and "confirmed_global.csv".
@@ -19,6 +19,7 @@ There are a few sections of this project:
 
 
 **Repository organization**
+
 data folder: has the data downloaded via spark for this project: cases by country daily and metadata by country.
 output: has the rmarkdown pdf output report.
 script: has the master script for creating the spark server and developing the report on COVID cases internationally over time. 
