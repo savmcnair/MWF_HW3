@@ -16,6 +16,7 @@ had to download java
 library(sparklyr)
 #spark_install(version = "3.0")
 library(dplyr)
+library(tidyr)
 ```
 
 #connecting - had to change the version to be the most recent compatible version
@@ -51,24 +52,122 @@ confirmed_tbl <- spark_read_csv(sc, name = "confirmed_tbl", path = file_confirme
 
 #2. In Spark, merge the two datasets, make a smaller version that includes only: Germany, China, Japan, United Kingdom, US, Brazil, Mexico and calculate the number of cases and rate of cases (cases/population) by country and day. Do two graphs and interpret them: change in the number of cases and change in rate by country. (25%)
 
-#merge datasets by country/region
+#reshape the cases dataset to long
 ```{r}
-merged_tbl <- confirmed_tbl %>%
-  left_join(lookup_tbl, 
-            by = c("CountryRegion" = "Country_Region"))
+#pull into r
+confirmed_rdf <- confirmed_tbl %>% collect()
+lookup_rdf <- lookup_tbl %>% collect()
+
+#identify date cols
+date_cols <- names(confirmed_rdf)[!names(confirmed_rdf) %in% c("ProvinceState", "CountryRegion", "Lat", "Long")]
+
+#pivot longer, reformat date, new days var
+confirmed_long <- confirmed_rdf %>%
+  pivot_longer(
+    cols = all_of(date_cols),
+    names_to = "date",
+    values_to = "cases"
+  ) %>%
+  mutate(
+    date = as.Date(date, format = "%m%d%y"),
+    days_since_start = as.numeric(date - min(date, na.rm = TRUE))
+  )
+```
+
+#clean lookup for merge
+```{r}
+lookup_clean <- lookup_rdf %>%
+  rename(
+    CountryRegion = Country_Region,
+    ProvinceState = Province_State,
+    Long = Long_,
+    Population = Population 
+  )
+```
+
+#merge datasets by country/region province, lat and long
+```{r}
+merged_rdf <- confirmed_long %>%
+  left_join(lookup_clean, by = c("CountryRegion", "ProvinceState","Lat","Long"))
+
+merged_rdf <- merged_rdf %>%
+  mutate(
+    case_rate = cases / Population
+  )
 ```
 
 #filter for countries of interest
 ```{r}
 countries <- c("Germany", "China", "Japan", "United Kingdom", "US", "Brazil", "Mexico")
 
-filtered_tbl <- merged_tbl %>%
+filtered_rdf <- merged_rdf %>%
   filter(`CountryRegion` %in% countries)
 ```
 
-##NEED TO DO BEFORE STATS: figure out how to make this long format since we need time?
+#push back to spark
+```{r}
+merged_tbl <- copy_to(sc, filtered_rdf, name = "merged_tbl", overwrite = TRUE)
+```
+
+#in spark, create summary table for plotting in r
+```{r}
+summary_tbl <- merged_tbl %>%
+  group_by(CountryRegion, days_since_start) %>%
+  summarise(
+    total_cases = sum(cases, na.rm = TRUE),
+    avg_case_rate = mean(case_rate, na.rm = TRUE)
+  )
+
+summary_df <- summary_tbl %>% collect()
+```
+
+#plotting case rate
+```{r}
+library(ggplot2)
+```
+```{r}
+ggplot(summary_df, aes(x = days_since_start, y = avg_case_rate, color = CountryRegion)) +
+  geom_line() +
+  scale_y_continuous(
+    limits = c(0, 0.5), 
+    labels = scales::comma
+  ) +
+  labs(
+    y = "case rate (# cases/population)",
+    x = "days since start",
+    title = "COVID-19 case rate by country"
+  ) +
+  theme_minimal()
+```
+
+#plotting cases
+```{r}
+summary_df_clean <- summary_df %>%
+  filter(!is.na(total_cases) & !is.na(days_since_start)) %>%
+  filter(!is.nan(days_since_start)) %>%
+  mutate(
+    days_since_start = ifelse(days_since_start == 0, 0.1, days_since_start)
+  )
+
+ggplot(summary_df_clean, aes(x = days_since_start, y = total_cases, color = CountryRegion)) +
+  geom_line() +
+  scale_y_continuous(
+    labels = scales::comma
+  ) +
+  labs(
+    y = "cases",
+    x = "days since start",
+    title = "COVID-19 case rate by country"
+  ) +
+  theme_minimal()
+```
 
 #3. Run a ml_linear_regression explaining the log of number of cases using: country, population size and day since the start of the pandemic. Interpret the results. (25%)
+
+```{r}
+
+```
+
 
 #4. Write up everything in an analytic notebook (pdf Rmarkdown) that shows all the syntax you used, the results and walk the reader through the steps of your analysis. (20%)
 
