@@ -139,6 +139,7 @@ ggplot(summary_df, aes(x = days_since_start, y = avg_case_rate, color = CountryR
   ) +
   theme_minimal()
 ```
+We see from this graph that there is a series of spikes over the course of the first two years, after which the case rates diminish internationally to nearly zero before a second spike. China has consistently low reported case rates per capita, while Germany has consistently high case rates per capita. 
 
 #plotting cases
 ```{r}
@@ -157,10 +158,12 @@ ggplot(summary_df_clean, aes(x = days_since_start, y = total_cases, color = Coun
   labs(
     y = "cases",
     x = "days since start",
-    title = "COVID-19 case rate by country"
+    title = "COVID-19 cases by country"
   ) +
   theme_minimal()
 ```
+This graph tells a different story. We see from this graph that from the start of the pandemic (day 0), there is an initial global spike leading up to around 600 days. From there, there is a gradual decline until about 7000 days and then an additional, smaller spike in cases which has not yet ended. The united states has had the highest number of cases in general throughout the entire pandemic (Pink).
+
 
 #3. Run a ml_linear_regression explaining the log of number of cases using: country, population size and day since the start of the pandemic. Interpret the results. (25%)
 
@@ -191,7 +194,6 @@ lm_model <- lm(log_cases ~ CountryRegion + Population + days_since_start, data =
 
 summary(lm_model)
 ```
-
 This model tries to predict the log # of cases based on country, population, and days since start of the pandemic. With a median of -0.04, this model is reasonably well fitted. There are some prediction errors. 53% of the variance can be explained by the models predictors. The model as a whole is significant!
 With reference to countries in the model, on average the United States had 3.5 log fewer cases as compared to other countries, while Germany has on average 3.7 log more cases than other countries on a given day, on average. These are the max and min. 
 With reference to population, this coefficient suggests that for every additional person, the log number of cases increases by 0.0000000371. This is statistically significant! Meaning that larger populations have higher log case numbers.
@@ -199,4 +201,8 @@ In terms of days, we see that for every day after the start of the pandemic the 
 
 #4. Write up everything in an analytic notebook (pdf Rmarkdown) that shows all the syntax you used, the results and walk the reader through the steps of your analysis. (20%)
 
+I will be adding notes to this rmarkdown and publishing to a pdf, which will output to the repository.
+
 #5. Presentation, presentation, presentation: README gives overview of the project and has session info, report text is easy to follow, graphs are easy to understand and properly formatted. (10%)
+
+README has additional notes, session info, and an overview of this project. Report texts walks the user through each step of my code and analyses, with interpretations of the graphs and my ML regression. I updated the scales of all graphs and labelled to ensure these graphs are intuitive and readable.
