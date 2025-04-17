@@ -18,7 +18,12 @@ There are a few sections of this project:
 5. Running a ML linear regression to explain the log number of cases using country, population size, and days since the start of the pandemic. This section has graphs and interpretations for the user.
 
 
-**Below are details for the session info for reproducibility: **
+**Repository organization**
+data folder: has the data downloaded via spark for this project: cases by country daily and metadata by country.
+output: has the rmarkdown pdf output report.
+script: has the master script for creating the spark server and developing the report on COVID cases internationally over time. 
+
+**Below are details for the session info for reproducibility:**
 
 Below is the session info for this R Markdown script, the packages needed, dependencies, and Rversion, platform, and OS so one can reproduce the use of this script exactly:
 
